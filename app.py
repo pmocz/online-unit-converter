@@ -191,23 +191,26 @@ def index():
             expr_mod = expr_mod.replace("^", "**")
             # remove spaces
             expr_mod = expr_mod.replace(" ", "")
+            # is "e" is sandwiched by numbers, replace with "10**"
+            expr_mod = re.sub(r"(\d+\.?d*)[eE]([+\-]?\d+)", r"\1*10**(\2)", expr_mod)
             # if a number is followed by a letter , insert *
             expr_mod = re.sub(r"(\d)([a-zA-Z(])", r"\1*\2", expr_mod)
-            # Replace known constants in the expression
-            for name, const in CONSTANTS.items():
-                unit_expr = "*".join(
-                    [
-                        f"({base})**{power}"
-                        for base, power in zip(const.unit.bases, const.unit.powers)
-                    ]
-                )
-                expr_mod = expr_mod.replace(name, f"({const.value})*{unit_expr}")
+            # if ) is followed by a letter , insert *
+            expr_mod = re.sub(r"(\))([a-zA-Z(])", r"\1*\2", expr_mod)
             print(expr_mod)
             # Evaluate the expression safely
             qty = eval(expr_mod, {**u.__dict__, **CONSTANTS, "__builtins__": {}})
             # Convert to base units of selected system
+            qty = Quantity(qty)  # (in case expression is just a number)
             converted = qty.decompose(bases=UNIT_SYSTEMS[system].bases)
-            result = f"{converted}"
+            # result = f"{converted}"
+            result = "".join(
+                [
+                    f"{base}^{power} "
+                    for base, power in zip(converted.unit.bases, converted.unit.powers)
+                ]
+            )
+            result = f"{converted.value} " + result.strip(" ")
         except Exception as e:
             error = str(e)
     return render_template(
