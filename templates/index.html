@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Unit Converter</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 500px; margin: auto; }
+        input, select, button { font-size: 1em; margin: 8px 0; padding: 8px; width: 100%; }
+        .result { margin-top: 20px; font-weight: bold; }
+        .error { color: red; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Unit Converter</h2>
+        <form method="post">
+            <label for="expression">Enter expression (e.g., G / (km/s)^2 * (mass of sun) / kpc):</label>
+            <input type="text" id="expression" name="expression" value="{{ expr }}" required>
+            <label for="system">Convert to unit system:</label>
+            <select id="system" name="system">
+                {% for sys in systems %}
+                <option value="{{ sys }}" {% if sys == system %}selected{% endif %}>{{ sys }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Convert</button>
+        </form>
+        {% if result %}
+        <div class="result">Result: {{ result }}</div>
+        {% endif %}
+        {% if error %}
+        <div class="error">Error: {{ error }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
