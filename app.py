@@ -197,6 +197,7 @@ def index():
             expr_mod = re.sub(r"(\d)([a-zA-Z(])", r"\1*\2", expr_mod)
             # if ) is followed by a letter , insert *
             expr_mod = re.sub(r"(\))([a-zA-Z(])", r"\1*\2", expr_mod)
+            expr_mod = "1*" + expr_mod
             print(expr_mod)
             # Evaluate the expression safely
             qty = eval(expr_mod, {**u.__dict__, **CONSTANTS, "__builtins__": {}})
