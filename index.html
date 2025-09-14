@@ -53,6 +53,12 @@
             } else {
                 exprInput.focus();
             }
+            // Add event listeners to unit system radio buttons to trigger conversion
+            document.querySelectorAll('input[name="system"]').forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    runPyodideConvert();
+                });
+            });
         });
         document.getElementById('expression').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -76,11 +82,14 @@
         let pyodideReadyPromise = loadPyodide({indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"});
         async function runPyodideConvert() {
             const resultBox = document.getElementById('pyodide-result');
-            resultBox.textContent = 'Loading Pyodide...';
+            if (!window._pyodideLoaded) {
+                resultBox.textContent = 'Loading Pyodide...';
+            }
             let pyodide = await pyodideReadyPromise;
             await pyodide.loadPackage(['micropip']);
             await pyodide.runPythonAsync('import micropip');
             await pyodide.runPythonAsync('await micropip.install("astropy")');
+            window._pyodideLoaded = true;
             const expr = document.getElementById('expression').value;
             const system = document.querySelector('input[name="system"]:checked').value;
             // Python code as a string
