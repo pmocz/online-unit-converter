@@ -102,6 +102,7 @@
             <label for="expression" style="margin-bottom: 6px; font-weight: 500; display: block;">Enter expression: <span style="color: #888; font-weight: 400;">e.g., G * c / (km/s)^2 * (mass of sun) / kpc</span></label>
         </form>
         <script>
+<<<<<<< HEAD
         // Add mobile-device class to body if on mobile
         function detectMobileDevice() {
             const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -118,6 +119,10 @@
     // Track if a conversion is requested while Pyodide is loading
     window._pendingConversion = false;
     window.addEventListener('DOMContentLoaded', async function() {
+=======
+        // Preserve cursor position after page reload
+        window.addEventListener('DOMContentLoaded', function() {
+>>>>>>> parent of d14f037 (start loading pyodide as soon as webpage is opened)
             const exprInput = document.getElementById('expression');
             const pos = sessionStorage.getItem('exprCursor');
             if (pos !== null) {
@@ -133,20 +138,6 @@
                     runPyodideConvert();
                 });
             });
-
-            // Start loading Pyodide and required packages immediately
-            window._pyodideLoaded = false;
-            window.pyodideReadyPromise = loadPyodide({indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"});
-            let pyodide = await window.pyodideReadyPromise;
-            await pyodide.loadPackage(['micropip']);
-            await pyodide.runPythonAsync('import micropip');
-            await pyodide.runPythonAsync('await micropip.install("astropy")');
-            window._pyodideLoaded = true;
-            // If a conversion was requested while loading, run it now
-            if (window._pendingConversion) {
-                window._pendingConversion = false;
-                runPyodideConvert();
-            }
         });
         // Track if the expression has been modified since last calculation
         let exprDirty = true;
@@ -175,18 +166,21 @@
         }
         </script>
         <script>
-        // Pyodide converter only (loading is handled on DOMContentLoaded)
+        // Pyodide loader and converter
+        let pyodideReadyPromise = loadPyodide({indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"});
         async function runPyodideConvert() {
             const resultBox = document.getElementById('pyodide-result');
             if (!window._pyodideLoaded) {
                 resultBox.textContent = 'loading pyodide...';
                 resultBox.style.color = '#888';
-                window._pendingConversion = true;
-                return;
             } else {
                 resultBox.style.color = '';
             }
-            let pyodide = await window.pyodideReadyPromise;
+            let pyodide = await pyodideReadyPromise;
+            await pyodide.loadPackage(['micropip']);
+            await pyodide.runPythonAsync('import micropip');
+            await pyodide.runPythonAsync('await micropip.install("astropy")');
+            window._pyodideLoaded = true;
             const expr = document.getElementById('expression').value;
             const system = document.querySelector('input[name="system"]:checked').value;
             // Python code as a string
