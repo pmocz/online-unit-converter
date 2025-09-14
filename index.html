@@ -83,7 +83,10 @@
         async function runPyodideConvert() {
             const resultBox = document.getElementById('pyodide-result');
             if (!window._pyodideLoaded) {
-                resultBox.textContent = 'Loading Pyodide...';
+                resultBox.textContent = 'loading pyodide...';
+                resultBox.style.color = '#888';
+            } else {
+                resultBox.style.color = '';
             }
             let pyodide = await pyodideReadyPromise;
             await pyodide.loadPackage(['micropip']);
@@ -279,6 +282,7 @@ result
             try {
                 let result = await pyodide.runPythonAsync(pyCode);
                 resultBox.textContent = result;
+                resultBox.style.color = '#000';
             } catch (e) {
                 resultBox.textContent = 'Error: ' + e;
             }
