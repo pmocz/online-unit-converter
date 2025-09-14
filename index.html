@@ -21,34 +21,56 @@
             body { margin: 10px; }
             .container { max-width: 100%; padding: 0 4px; }
             input, select, button {
-                font-size: 1.5em !important;
-                padding: 22px !important;
-                min-height: 60px !important;
+                font-size: 2em !important;
+                padding: 32px !important;
+                min-height: 90px !important;
+                box-sizing: border-box;
             }
             .result, #result-box, form > div, .container > div, #unit-systems {
                 max-width: 100% !important;
                 width: 100% !important;
+                font-size: 1.7em !important;
                 box-sizing: border-box;
             }
             #result-box {
-                padding: 22px 16px !important;
-                font-size: 1.3em !important;
-                min-height: 60px !important;
+                padding: 32px 24px !important;
+                font-size: 1.7em !important;
+                min-height: 90px !important;
+                margin-top: 8px !important;
+                margin-bottom: 40px !important;
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
             }
             #expression {
-                padding: 28px 16px !important;
-                font-size: 1.3em !important;
-                min-height: 60px !important;
+                padding: 38px 24px !important;
+                font-size: 1.7em !important;
+                min-height: 90px !important;
+                margin-top: 40px !important;
+                margin-bottom: 16px !important;
             }
             #convert-btn {
-                font-size: 2em !important;
-                min-height: 60px !important;
+                font-size: 2.5em !important;
+                min-height: 90px !important;
             }
             h2 {
-                font-size: 2em !important;
+                font-size: 2.5em !important;
+                margin-bottom: 24px !important;
             }
             label, .result, #unit-systems {
-                font-size: 1.3em !important;
+                font-size: 1.2em !important;
+            }
+            #unit-systems input[type="radio"] {
+                width: 0.3em !important;
+                height: 0.3em !important;
+            }
+            form > div {
+                flex-direction: column !important;
+                height: auto !important;
+                gap: 0 !important;
+            }
+            .container > div {
+                margin-bottom: 16px !important;
             }
         }
     </style>
