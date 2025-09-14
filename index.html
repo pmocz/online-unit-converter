@@ -21,8 +21,25 @@
 <body>
     <div class="container">
         <h2>Online Unit Converter</h2>
+        <div style="display: flex; align-items: center; margin-bottom: 4px; font-weight: 500; max-width: 500px; margin: 0 auto; gap: 20px;">
+            <span>Result:</span>
+            <div id="unit-systems" style="display: flex; gap: 20px;">
+                <label style="display: flex; align-items: center; gap: 5px;">
+                    <input type="radio" name="system" value="SI" checked>
+                    SI
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px;">
+                    <input type="radio" name="system" value="cgs">
+                    CGS
+                </label>
+            </div>
+        </div>
+        <div class="result" id="result-box" onclick="copyResultBox()" title="Click to copy" style="display: flex; align-items: center; gap: 10px; border: 1px solid #007bff; border-radius: 8px; background: #f8faff; padding: 14px 18px; cursor: pointer; user-select: all; box-shadow: 0 1px 4px rgba(0,0,0,0.04); max-width: 500px; margin: 0 auto; box-sizing: border-box;">
+            <span style="flex: 1;" id="pyodide-result"></span>
+            <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="vertical-align: middle;"><rect x="9" y="9" width="13" height="13" rx="2" stroke-width="2"/><rect x="3" y="3" width="13" height="13" rx="2" stroke-width="2"/></svg>
+        </div>
+        <div style="margin-top: 24px;"></div>
         <form id="converter-form" onsubmit="event.preventDefault(); runPyodideConvert();">
-            <label for="expression" style="margin-bottom: 6px; font-weight: 500;">Enter expression: <span style="color: #888; font-weight: 400;">e.g., G * c / (km/s)^2 * (mass of sun) / kpc</span></label>
             <div style="max-width: 500px; margin: 0 auto; display: flex; height: 80px; margin-bottom: 10px;">
                 <div style="flex: 7; position: relative;">
                     <input type="text" id="expression" name="expression" required style="width: 100%; height: 100%; border: 1px solid #ccc; border-top-left-radius: 30px; border-bottom-left-radius: 30px; border-top-right-radius: 0; border-bottom-right-radius: 0; padding: 24px 18px; font-size: 1.2em; outline: none; box-sizing: border-box;">
@@ -34,26 +51,8 @@
                     </svg>
                 </button>
             </div>
-            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 10px;">
-                <span>Convert to:</span>
-                <div id="unit-systems" style="display: flex; gap: 20px;">
-                    <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="system" value="SI" checked>
-                        SI
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="system" value="cgs">
-                        CGS
-                    </label>
-                </div>
-            </div>
+            <label for="expression" style="margin-bottom: 6px; font-weight: 500; display: block;">Enter expression: <span style="color: #888; font-weight: 400;">e.g., G * c / (km/s)^2 * (mass of sun) / kpc</span></label>
         </form>
-        <div style="margin-top: 24px;"></div>
-        <div class="result" style="margin-bottom: 4px; font-weight: 500; max-width: 500px; margin: 0 auto;">Result:</div>
-        <div class="result" id="result-box" onclick="copyResultBox()" title="Click to copy" style="display: flex; align-items: center; gap: 10px; border: 1px solid #007bff; border-radius: 8px; background: #f8faff; padding: 14px 18px; cursor: pointer; user-select: all; box-shadow: 0 1px 4px rgba(0,0,0,0.04); max-width: 500px; margin: 0 auto; box-sizing: border-box;">
-            <span style="flex: 1;" id="pyodide-result"></span>
-            <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="vertical-align: middle;"><rect x="9" y="9" width="13" height="13" rx="2" stroke-width="2"/><rect x="3" y="3" width="13" height="13" rx="2" stroke-width="2"/></svg>
-        </div>
         <script>
         // Preserve cursor position after page reload
         window.addEventListener('DOMContentLoaded', function() {
