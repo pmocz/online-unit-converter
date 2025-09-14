@@ -16,6 +16,31 @@
         }
         .result { margin-top: 20px; font-weight: bold; }
         .error { color: red; margin-top: 20px; }
+        /* Responsive styles for mobile */
+        @media (max-width: 600px) {
+            body { margin: 10px; }
+            .container { max-width: 100%; padding: 0 4px; }
+            input, select, button { font-size: 1.1em; padding: 12px; }
+            .result, #result-box, form > div, .container > div, #unit-systems {
+                max-width: 100% !important;
+                width: 100% !important;
+                box-sizing: border-box;
+            }
+            #result-box {
+                padding: 12px 8px !important;
+                font-size: 1em;
+            }
+            #expression {
+                padding: 18px 10px !important;
+                font-size: 1em !important;
+            }
+            #convert-btn {
+                font-size: 1.2em !important;
+            }
+            h2 {
+                font-size: 1.3em;
+            }
+        }
     </style>
 </head>
 <body>
