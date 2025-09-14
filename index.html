@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Unit Converter</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 500px; margin: auto; }
+        input, select, button { font-size: 1em; margin: 8px 0; padding: 8px; width: 100%; }
+        .result { margin-top: 20px; font-weight: bold; }
+        .error { color: red; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Online Unit Converter</h2>
+        <form id="converter-form" onsubmit="event.preventDefault(); runPyodideConvert();">
+            <label for="expression" style="margin-bottom: 6px; font-weight: 500;">Enter expression: <span style="color: #888; font-weight: 400;">e.g., G * c / (km/s)^2 * (mass of sun) / kpc</span></label>
+            <div style="max-width: 500px; margin: 0 auto;">
+                <input type="text" id="expression" name="expression" required style="width: 100%; height: 58px; border: 1px solid #ccc; border-radius: 6px; padding: 16px 14px; font-size: 1.1em; outline: none; margin-bottom: 10px; box-sizing: border-box;">
+                <button type="submit" style="background: #007bff; color: white; border: none; border-radius: 6px; padding: 10px 0; width: 100%; font-size: 1em; cursor: pointer; transition: background 0.2s; margin-bottom: 16px; box-sizing: border-box;">Convert</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 10px;">
+                <span>Convert to:</span>
+                <div id="unit-systems" style="display: flex; gap: 20px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="system" value="SI" checked>
+                        SI
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="system" value="cgs">
+                        CGS
+                    </label>
+                </div>
+            </div>
+        </form>
+        <div style="margin-top: 24px;"></div>
+        <div class="result" style="margin-bottom: 4px; font-weight: 500; max-width: 500px; margin: 0 auto;">Result:</div>
+        <div class="result" id="result-box" onclick="copyResultBox()" title="Click to copy" style="display: flex; align-items: center; gap: 10px; border: 1px solid #007bff; border-radius: 8px; background: #f8faff; padding: 14px 18px; cursor: pointer; user-select: all; box-shadow: 0 1px 4px rgba(0,0,0,0.04); max-width: 500px; margin: 0 auto; box-sizing: border-box;">
+            <span style="flex: 1;" id="pyodide-result"></span>
+            <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="vertical-align: middle;"><rect x="9" y="9" width="13" height="13" rx="2" stroke-width="2"/><rect x="3" y="3" width="13" height="13" rx="2" stroke-width="2"/></svg>
+        </div>
+        <script>
+        // Preserve cursor position after page reload
+        window.addEventListener('DOMContentLoaded', function() {
+            const exprInput = document.getElementById('expression');
+            const pos = sessionStorage.getItem('exprCursor');
+            if (pos !== null) {
+                exprInput.focus();
+                exprInput.setSelectionRange(pos, pos);
+                sessionStorage.removeItem('exprCursor');
+            } else {
+                exprInput.focus();
+            }
+        });
+        document.getElementById('expression').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                sessionStorage.setItem('exprCursor', e.target.selectionStart);
+            }
+        });
+        function copyResultBox() {
+            const resultText = document.querySelector('#result-box span').textContent;
+            navigator.clipboard.writeText(resultText).then(() => {
+                const icon = document.getElementById('copy-icon');
+                icon.outerHTML = '<svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="vertical-align: middle;"><polyline points="20 6 9 17 4 12" style="fill:none;stroke:#28a745;stroke-width:2"/></svg>';
+                setTimeout(() => {
+                    const box = document.getElementById('result-box');
+                    box.querySelector('svg').outerHTML = '<svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="vertical-align: middle;"><rect x="9" y="9" width="13" height="13" rx="2" stroke-width="2"/><rect x="3" y="3" width="13" height="13" rx="2" stroke-width="2"/></svg>';
+                }, 1200);
+            });
+        }
+        </script>
+        <script>
+        // Pyodide loader and converter
+        let pyodideReadyPromise = loadPyodide({indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"});
+        async function runPyodideConvert() {
+            const resultBox = document.getElementById('pyodide-result');
+            resultBox.textContent = 'Loading Pyodide...';
+            let pyodide = await pyodideReadyPromise;
+            await pyodide.loadPackage(['micropip']);
+            await pyodide.runPythonAsync('import micropip');
+            await pyodide.runPythonAsync('await micropip.install("astropy")');
+            const expr = document.getElementById('expression').value;
+            const system = document.querySelector('input[name="system"]:checked').value;
+            // Python code as a string
+            const pyCode = `
+import re
+from astropy import units as u
+from astropy.units import Quantity
+from astropy.constants import G, c, M_sun
+from astropy.constants import (
+    G,
+    N_A,
+    R,
+    Ryd,
+    a0,
+    alpha,
+    atm,
+    c,
+    e,
+    eps0,
+    g0,
+    h,
+    hbar,
+    k_B,
+    m_e,
+    m_n,
+    m_p,
+    mu0,
+    muB,
+    sigma_T,
+    sigma_sb,
+    GM_earth,
+    GM_jup,
+    GM_sun,
+    L_bol0,
+    L_sun,
+    M_earth,
+    M_jup,
+    M_sun,
+    R_earth,
+    R_jup,
+    R_sun,
+)
+
+UNIT_SYSTEMS = {"cgs": u.cgs, "SI": u.si}
+CONSTANTS = {
+    "G": G,
+    "Gravitationalconstant": G,
+    "gravitationalconstant": G,
+    "newton'sconstant": G,
+    "Newton'sconstant": G,
+    "N_A": N_A,
+    "Avogadro'snumber": N_A,
+    "avogadro'snumber": N_A,
+    "R": R,
+    "Gasconstant": R,
+    "gasconstant": R,
+    "Ryd": Ryd,
+    "Rydbergconstant": Ryd,
+    "rydbergconstant": Ryd,
+    "a0": a0,
+    "Bohrradius": a0,
+    "bohrradius": a0,
+    "alpha": alpha,
+    "Fine-structureconstant": alpha,
+    "fine-structureconstant": alpha,
+    "atm": atm,
+    "Standardatmosphere": atm,
+    "standardatmosphere": atm,
+    "c": c,
+    "Speedoflight": c,
+    "speedoflight": c,
+    "Electroncharge": e,
+    "electroncharge": e,
+    "eps0": eps0,
+    "Vacuumelectricpermittivity": eps0,
+    "vacuumelectricpermittivity": eps0,
+    "g0": g0,
+    "Standardgravity": g0,
+    "standardgravity": g0,
+    "h": h,
+    "Planckconstant": h,
+    "planckconstant": h,
+    "hbar": hbar,
+    "ReducedPlanckconstant": hbar,
+    "Reducedplanckconstant": hbar,
+    "reducedPlanckconstant": hbar,
+    "reducedplanckconstant": hbar,
+    "k_B": k_B,
+    "Boltzmannconstant": k_B,
+    "boltzmannconstant": k_B,
+    "m_e": m_e,
+    "Electronmass": m_e,
+    "electronmass": m_e,
+    "Massofelectron": m_e,
+    "massofelectron": m_e,
+    "m_n": m_n,
+    "Neutronmass": m_n,
+    "neutronmass": m_n,
+    "Massofneutron": m_n,
+    "massofneutron": m_n,
+    "m_p": m_p,
+    "Protonmass": m_p,
+    "protonmass": m_p,
+    "Massofproton": m_p,
+    "massofproton": m_p,
+    "mu0": mu0,
+    "Vacuummagneticpermeability": mu0,
+    "vacuummagneticpermeability": mu0,
+    "muB": muB,
+    "Bohrmagneton": muB,
+    "bohrmagneton": muB,
+    "sigma_T": sigma_T,
+    "Thomsoncrosssection": sigma_T,
+    "thomsoncrosssection": sigma_T,
+    "sigma_sb": sigma_sb,
+    "Stefan-Boltzmannconstant": sigma_sb,
+    "stefan-boltzmannconstant": sigma_sb,
+    "GM_earth": GM_earth,
+    "GM_jup": GM_jup,
+    "GM_sun": GM_sun,
+    "L_bol0": L_bol0,
+    "L_sun": L_sun,
+    "Solarluminosity": L_sun,
+    "luminosityofsun": L_sun,
+    "Luminosityofsun": L_sun,
+    "luminosityofsun": L_sun,
+    "M_earth": M_earth,
+    "massofearth": M_earth,
+    "Massofearth": M_earth,
+    "massofEarth": M_earth,
+    "MassofEarth": M_earth,
+    "Earthmass": M_earth,
+    "earthmass": M_earth,
+    "M_jup": M_jup,
+    "massofjupiter": M_jup,
+    "Massofjupiter": M_jup,
+    "massofJupiter": M_jup,
+    "MassofJupiter": M_jup,
+    "Jupitermass": M_jup,
+    "jupitermass": M_jup,
+    "M_sun": M_sun,
+    "massofsun": M_sun,
+    "massofSun": M_sun,
+    "Solarmass": M_sun,
+    "solarmass": M_sun,
+    "Msun": M_sun,
+    "m_sun": M_sun,
+    "msun": M_sun,
+    "R_earth": R_earth,
+    "Radiusofearth": R_earth,
+    "radiusofearth": R_earth,
+    "RadiusofEarth": R_earth,
+    "radiusofEarth": R_earth,
+    "Earthradius": R_earth,
+    "earthradius": R_earth,
+    "R_jup": R_jup,
+    "Radiusofjupiter": R_jup,
+    "radiusofjupiter": R_jup,
+    "RadiusofJupiter": R_jup,
+    "radiusofJupiter": R_jup,
+    "Jupiterradius": R_jup,
+    "jupiterradius": R_jup,
+    "R_sun": R_sun,
+    "Radiusofsun": R_sun,
+    "radiusofsun": R_sun,
+    "RadiusofSun": R_sun,
+    "radiusofSun": R_sun,
+    "Solarradius": R_sun,
+    "solarradius": R_sun,
+}
+expr = """${expr}"""
+system = "${system}"
+expr_mod = expr.replace("^", "**").replace(" ", "")
+expr_mod = re.sub(r"(\\d+\\.?d*)[eE]([+\\-]?\\d+)", r"\\1*10**(\\2)", expr_mod)
+expr_mod = re.sub(r"(\\d)([a-zA-Z(])", r"\\1*\\2", expr_mod)
+expr_mod = re.sub(r"(\\))([a-zA-Z(])", r"\\1*\\2", expr_mod)
+expr_mod = "1*" + expr_mod
+try:
+    qty = eval(expr_mod, {**u.__dict__, **CONSTANTS, "__builtins__": {}})
+    qty = Quantity(qty)
+    converted = qty.decompose(bases=UNIT_SYSTEMS[system].bases)
+    result = str(converted.value) + " " + " ".join([f"{base}^{power}" for base, power in zip(converted.unit.bases, converted.unit.powers)])
+except Exception as e:
+    result = "Error: " + str(e)
+result
+            `;
+            try {
+                let result = await pyodide.runPythonAsync(pyCode);
+                resultBox.textContent = result;
+            } catch (e) {
+                resultBox.textContent = 'Error: ' + e;
+            }
+        }
+        </script>
+    </div>
+</body>
+</html>
