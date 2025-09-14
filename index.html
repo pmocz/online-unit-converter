@@ -17,9 +17,16 @@
         <h2>Online Unit Converter</h2>
         <form id="converter-form" onsubmit="event.preventDefault(); runPyodideConvert();">
             <label for="expression" style="margin-bottom: 6px; font-weight: 500;">Enter expression: <span style="color: #888; font-weight: 400;">e.g., G * c / (km/s)^2 * (mass of sun) / kpc</span></label>
-            <div style="max-width: 500px; margin: 0 auto;">
-                <input type="text" id="expression" name="expression" required style="width: 100%; height: 58px; border: 1px solid #ccc; border-radius: 6px; padding: 16px 14px; font-size: 1.1em; outline: none; margin-bottom: 10px; box-sizing: border-box;">
-                <button type="submit" style="background: #007bff; color: white; border: none; border-radius: 6px; padding: 10px 0; width: 100%; font-size: 1em; cursor: pointer; transition: background 0.2s; margin-bottom: 16px; box-sizing: border-box;">Convert</button>
+            <div style="max-width: 500px; margin: 0 auto; display: flex; height: 80px; margin-bottom: 10px;">
+                <div style="flex: 7; position: relative;">
+                    <input type="text" id="expression" name="expression" required style="width: 100%; height: 100%; border: 1px solid #ccc; border-top-left-radius: 30px; border-bottom-left-radius: 30px; border-top-right-radius: 0; border-bottom-right-radius: 0; padding: 24px 18px; font-size: 1.2em; outline: none; box-sizing: border-box;">
+                </div>
+                <button type="submit" style="flex: 1; height: 100%; border: none; border-top-right-radius: 30px; border-bottom-right-radius: 30px; border-top-left-radius: 0; border-bottom-left-radius: 0; background: #007bff; color: white; font-size: 1.5em; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: background 0.2s;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <rect x="7" y="10" width="10" height="2" rx="1" fill="#fff" />
+                        <rect x="7" y="14" width="10" height="2" rx="1" fill="#fff" />
+                    </svg>
+                </button>
             </div>
             <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 10px;">
                 <span>Convert to:</span>
@@ -138,6 +145,9 @@ from astropy.constants import (
 
 UNIT_SYSTEMS = {"cgs": u.cgs, "SI": u.si}
 CONSTANTS = {
+    "pi": 3.141592653589793,
+    "euler": 0.577215664901532,
+    "golden": 1.618033988749895,
     "G": G,
     "Gravitationalconstant": G,
     "gravitationalconstant": G,
