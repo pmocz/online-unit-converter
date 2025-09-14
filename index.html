@@ -8,6 +8,12 @@
         body { font-family: Arial, sans-serif; margin: 40px; }
         .container { max-width: 500px; margin: auto; }
         input, select, button { font-size: 1em; margin: 8px 0; padding: 8px; width: 100%; }
+        .convert-btn-green {
+            background: #28a745 !important;
+        }
+        .convert-btn-blue {
+            background: #007bff !important;
+        }
         .result { margin-top: 20px; font-weight: bold; }
         .error { color: red; margin-top: 20px; }
     </style>
@@ -21,7 +27,7 @@
                 <div style="flex: 7; position: relative;">
                     <input type="text" id="expression" name="expression" required style="width: 100%; height: 100%; border: 1px solid #ccc; border-top-left-radius: 30px; border-bottom-left-radius: 30px; border-top-right-radius: 0; border-bottom-right-radius: 0; padding: 24px 18px; font-size: 1.2em; outline: none; box-sizing: border-box;">
                 </div>
-                <button type="submit" style="flex: 1; height: 100%; border: none; border-top-right-radius: 30px; border-bottom-right-radius: 30px; border-top-left-radius: 0; border-bottom-left-radius: 0; background: #007bff; color: white; font-size: 1.5em; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: background 0.2s;">
+                <button id="convert-btn" type="submit" class="convert-btn-blue" style="flex: 1; height: 100%; border: none; border-top-right-radius: 30px; border-bottom-right-radius: 30px; border-top-left-radius: 0; border-bottom-left-radius: 0; color: white; font-size: 1.5em; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: background 0.2s;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <rect x="7" y="10" width="10" height="2" rx="1" fill="#fff" />
                         <rect x="7" y="14" width="10" height="2" rx="1" fill="#fff" />
@@ -66,6 +72,15 @@
                     runPyodideConvert();
                 });
             });
+        });
+        // Track if the expression has been modified since last calculation
+        let exprDirty = true;
+        const exprInput = document.getElementById('expression');
+        const convertBtn = document.getElementById('convert-btn');
+        exprInput.addEventListener('input', function() {
+            exprDirty = true;
+            convertBtn.classList.remove('convert-btn-green');
+            convertBtn.classList.add('convert-btn-blue');
         });
         document.getElementById('expression').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -293,8 +308,19 @@ result
                 let result = await pyodide.runPythonAsync(pyCode);
                 resultBox.textContent = result;
                 resultBox.style.color = '#000';
+                // If result is valid (does not start with 'Error'), turn button green and mark input as clean
+                if (!String(result).startsWith('Error')) {
+                    convertBtn.classList.remove('convert-btn-blue');
+                    convertBtn.classList.add('convert-btn-green');
+                    exprDirty = false;
+                } else {
+                    convertBtn.classList.remove('convert-btn-green');
+                    convertBtn.classList.add('convert-btn-blue');
+                }
             } catch (e) {
                 resultBox.textContent = 'Error: ' + e;
+                convertBtn.classList.remove('convert-btn-green');
+                convertBtn.classList.add('convert-btn-blue');
             }
         }
         </script>
