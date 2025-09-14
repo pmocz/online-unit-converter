@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+    (function() {
+        function isMobile() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const isSmallScreen = window.innerWidth <= 600;
+            // User agent check for mobile devices
+            const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+            return (isMobileUA || isTouch) && isSmallScreen;
+        }
+        function applyMobileClass() {
+            if (isMobile()) {
+                document.body.classList.add('mobile-device');
+            } else {
+                document.body.classList.remove('mobile-device');
+            }
+        }
+        window.addEventListener('DOMContentLoaded', applyMobileClass);
+        window.addEventListener('resize', applyMobileClass);
+    })();
+    </script>
     <meta charset="UTF-8">
     <title>Online Unit Converter</title>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
