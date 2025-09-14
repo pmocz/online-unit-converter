@@ -1,8 +1,9 @@
 # Online Unit Converter
 
-A Python web application for unit conversion using Astropy. Users can enter an expression (e.g., '5 km/s') and select the output unit system (e.g., cgs, SI) to get the converted result.
+A Python web application for unit conversion. Users can enter an expression (e.g., `G * c/ (km/s)^2 * (mass of sun) / kpc`) and select the output unit system (e.g., cgs, SI) to get the converted result. Uses the `astropy` library.
 
 ## How to Run
+
 1. Install dependencies:
    ```bash
    pip install flask astropy
