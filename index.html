@@ -17,28 +17,38 @@
         .result { margin-top: 20px; font-weight: bold; }
         .error { color: red; margin-top: 20px; }
         /* Responsive styles for mobile */
-        @media (max-width: 1180px) {
+        @media (max-width: 1080px) {
             body { margin: 10px; }
             .container { max-width: 100%; padding: 0 4px; }
-            input, select, button { font-size: 1.1em; padding: 12px; }
+            input, select, button {
+                font-size: 1.5em !important;
+                padding: 22px !important;
+                min-height: 60px !important;
+            }
             .result, #result-box, form > div, .container > div, #unit-systems {
                 max-width: 100% !important;
                 width: 100% !important;
                 box-sizing: border-box;
             }
             #result-box {
-                padding: 12px 8px !important;
-                font-size: 1em;
+                padding: 22px 16px !important;
+                font-size: 1.3em !important;
+                min-height: 60px !important;
             }
             #expression {
-                padding: 18px 10px !important;
-                font-size: 1em !important;
+                padding: 28px 16px !important;
+                font-size: 1.3em !important;
+                min-height: 60px !important;
             }
             #convert-btn {
-                font-size: 1.2em !important;
+                font-size: 2em !important;
+                min-height: 60px !important;
             }
             h2 {
-                font-size: 1.3em;
+                font-size: 2em !important;
+            }
+            label, .result, #unit-systems {
+                font-size: 1.3em !important;
             }
         }
     </style>
