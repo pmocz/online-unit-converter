@@ -143,19 +143,25 @@
         // Pyodide converter only (loading is handled on DOMContentLoaded)
         async function runPyodideConvert() {
             const resultBox = document.getElementById('pyodide-result');
-            if (!window._pyodideLoaded) {
-                resultBox.textContent = 'loading pyodide...';
-                resultBox.style.color = '#888';
-                window._pendingConversion = true;
-                return;
-            } else {
-                resultBox.style.color = '';
-            }
-            let pyodide = await window.pyodideReadyPromise;
-            const expr = document.getElementById('expression').value;
-            const system = document.querySelector('input[name="system"]:checked').value;
-            // Python code as a string
-            const pyCode = `
+                if (!window._pyodideLoaded) {
+                    resultBox.textContent = 'loading pyodide...';
+                    resultBox.style.color = '#888';
+                    window._pendingConversion = true;
+                    return;
+                } else {
+                    resultBox.style.color = '';
+                }
+                const expr = document.getElementById('expression').value;
+                if (expr.trim() === "") {
+                    resultBox.textContent = "";
+                    convertBtn.classList.remove('convert-btn-green');
+                    convertBtn.classList.add('convert-btn-blue');
+                    return;
+                }
+                let pyodide = await window.pyodideReadyPromise;
+                const system = document.querySelector('input[name="system"]:checked').value;
+                // Python code as a string
+                const pyCode = `
 import re
 from astropy import units as u
 from astropy.units import Quantity
