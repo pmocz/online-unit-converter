@@ -4,5 +4,7 @@ A Python web application for unit conversion. Users can enter an expression (e.g
 
 Philip Mocz (2025)
 
+## [Try it out!](https://pmocz.github.io/online-unit-converter/)
+
 ![Calculator Preview](calculator.png)
 
