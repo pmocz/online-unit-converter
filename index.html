@@ -491,7 +491,11 @@ try:
     qty = eval(expr_mod, {**u.__dict__, **CONSTANTS, "__builtins__": {}})
     qty = Quantity(qty)
     converted = qty.decompose(bases=UNIT_SYSTEMS[system].bases)
-    result = str(converted.value) + " " + " ".join([f"{base}^{power}" for base, power in zip(converted.unit.bases, converted.unit.powers)])
+    units_str = " ".join([
+        f"{base}" if power == 1 else f"{base}^{power}"
+        for base, power in zip(converted.unit.bases, converted.unit.powers)
+    ])
+    result = str(converted.value) + " " + units_str
 except Exception as e:
     result = "Error: " + str(e)
 result
