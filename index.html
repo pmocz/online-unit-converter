@@ -3,6 +3,7 @@
 <head>
         <meta charset="UTF-8">
         <title>Online Unit Converter | Fast Scientific Unit Conversion Tool</title>
+        <link rel="icon" type="image/png" href="icon.png">
         <meta name="description" content="Convert scientific units instantly online. Supports cgs, SI, and custom expressions. Powered by Astropy and Pyodide.">
         <meta name="keywords" content="unit converter, scientific units, cgs, SI, online calculator, astropy, pyodide, physics, math, conversion">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -388,6 +389,15 @@ CONSTANTS = {
     "radiusofSun": R_sun,
     "Solarradius": R_sun,
     "solarradius": R_sun,
+    "gallon": 3.785411784 * u.liter,
+    "quart": 0.946352946 * u.liter,
+    "pint": 0.473176473 * u.liter,
+    "cup": 0.2365882365 * u.liter,
+    "tablespoon": 0.0147867648 * u.liter,
+    "teaspoon": 0.00492892159375 * u.liter,
+    "fluidounce": 0.0295735295625 * u.liter,
+    "fluidounces": 0.0295735295625 * u.liter,
+    "fluidoz": 0.0295735295625 * u.liter,
 }
 expr = """${expr}"""
 system = "${system}"
