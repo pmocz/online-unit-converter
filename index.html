@@ -391,6 +391,8 @@ CONSTANTS = {
 }
 expr = """${expr}"""
 system = "${system}"
+if " to " in expr:
+    expr = "(" + expr.replace(" to ", ")/(") + ")"
 expr_mod = expr.replace("^", "**").replace(" ", "")
 expr_mod = re.sub(r"(\\d+\\.?d*)[eE]([+\\-]?\\d+)", r"\\1*10**(\\2)", expr_mod)
 expr_mod = re.sub(r"(\\d)([a-zA-Z(])", r"\\1*\\2", expr_mod)
