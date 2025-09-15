@@ -13,6 +13,7 @@
         <meta charset="UTF-8">
         <title>Online Unit Converter | Fast Scientific Unit Conversion Tool</title>
         <link rel="icon" type="image/png" href="icon.png">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
         <meta name="description" content="Convert scientific units instantly online. Supports cgs, SI, and custom expressions. Powered by Astropy and Pyodide.">
         <meta name="keywords" content="unit converter, scientific units, cgs, SI, online calculator, astropy, pyodide, physics, math, conversion">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -41,9 +42,78 @@
         </script>
         <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .container { max-width: 500px; margin: auto; }
-        input, select, button { font-size: 1em; margin: 8px 0; padding: 8px; width: 100%; }
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+        }
+        .container {
+            max-width: 520px;
+            margin: 48px auto 0 auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 36px 32px 24px 32px;
+        }
+        input, select, button {
+            font-size: 1em;
+            margin: 8px 0;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px #6366f133;
+        }
+        .convert-btn-green {
+            background: linear-gradient(90deg, #28a745 60%, #34d399 100%) !important;
+            box-shadow: 0 2px 8px rgba(40,167,69,0.08);
+        }
+        .convert-btn-blue {
+            background: linear-gradient(90deg, #6366f1 60%, #3b82f6 100%) !important;
+            box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+        }
+        .convert-btn-blue:hover, .convert-btn-green:hover {
+            filter: brightness(1.08);
+            box-shadow: 0 4px 16px rgba(59,130,246,0.12);
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.15em;
+        }
+        .error { color: red; margin-top: 20px; }
+        #result-box {
+            animation: popResult 0.5s;
+        }
+        @keyframes popResult {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            60% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        h1 {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 2.3em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 18px;
+            text-align: center;
+            color: #6366f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .logo {
+            width: 36px;
+            height: 36px;
+            vertical-align: middle;
+        }
         .convert-btn-green {
             background: #28a745 !important;
         }
@@ -113,7 +183,7 @@
 </head>
 <body>
     <main class="container">
-        <h1>Online Unit Converter</h1>
+        <h1><img src="icon.png" alt="Logo" class="logo"> Online Unit Converter</h1>
         <div style="display: flex; align-items: center; margin-bottom: 4px; font-weight: 500; max-width: 500px; margin: 0 auto; gap: 20px;">
             <span>Result:</span>
             <div id="unit-systems" style="display: flex; gap: 20px;">
@@ -128,7 +198,7 @@
             </div>
         </div>
         <div class="result" id="result-box" onclick="copyResultBox()" title="Click to copy" style="display: flex; align-items: center; gap: 10px; border: 1px solid #007bff; border-radius: 8px; background: #f8faff; padding: 14px 18px; cursor: pointer; user-select: all; box-shadow: 0 1px 4px rgba(0,0,0,0.04); max-width: 500px; margin: 0 auto; box-sizing: border-box;">
-            <span style="flex: 1;" id="pyodide-result" aria-live="polite"></span>
+            <span style="flex: 1; font-size: 1.15em; color: #222;" id="pyodide-result" aria-live="polite"></span>
             <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="vertical-align: middle;" aria-label="Copy result"><rect x="9" y="9" width="13" height="13" rx="2" stroke-width="2"/><rect x="3" y="3" width="13" height="13" rx="2" stroke-width="2"/></svg>
         </div>
         <div style="margin-top: 24px;"></div>
@@ -452,7 +522,7 @@ result
     <span style="font-size:0.92em; color:#444;">Missing a unit? </span><a href="https://github.com/pmocz/online-unit-converter/issues" target="_blank" style="color:#007bff; font-size:0.92em; text-decoration:underline;">Open an Issue</a>
     </div>
     <footer style="text-align:center; margin-top:10px; color:#888; font-size:0.95em;">
-        &copy; 2025 <a href="https://github.com/pmocz" target="_blank" style="color:#007bff; text-decoration:none;">Philip Mocz</a>
+    &copy; 2025 <a href="https://github.com/pmocz" target="_blank" style="color:#6366f1; text-decoration:none; font-weight:500;">Philip Mocz</a>
     </footer>
     </main>
 </body>
