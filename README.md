@@ -8,3 +8,14 @@ Philip Mocz (2025)
 
 ![Calculator Preview](calculator.png)
 
+Use this tool for improved reliability over Google's search bar:
+
+### Below are error modes for Google's search bar (Sept 2025)
+
+Wrong numerical value:
+
+![Wrong numerical value](error1.png)
+
+AI response triggered:
+
+![AI response](error2.png)
